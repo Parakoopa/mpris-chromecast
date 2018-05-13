@@ -57,7 +57,7 @@ dm.on('powerState', powerState => {
     }
 });
 dm.on('application', application => {
-    let title = '---', artist = '---';
+    let title = '', artist = '';
     if (player.metadata && player.metadata['xesam:title']) {
         title = player.metadata['xesam:title']
     }
@@ -78,7 +78,7 @@ dm.on('application', application => {
     console.log(application);
 });
 dm.on('media', media => {
-    let application = '---', artist = ['---'];
+    let application = '', artist = [''];
     if (media.artist) {
         artist = [media.artist]
     }
@@ -89,7 +89,7 @@ dm.on('media', media => {
         'mpris:trackid': player.objectPath('track/0'),
         'mpris:length': 0,
         'mpris:artUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Chromecast_cast_button_icon.svg/500px-Chromecast_cast_button_icon.svg.png',
-        'xesam:title': media.title || '---',
+        'xesam:title': media.title || '',
         'xesam:album': application,
         'xesam:artist': artist,
     };

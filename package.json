@@ -4,9 +4,10 @@
   "description": "A MPRIS service that bridges to a Chromecast device in your network.",
   "main": "index.js",
   "author": "Parakoopa",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": "github:Parakoopa/mpris-chromecast",
   "dependencies": {
-    "castv2-device-monitor": "github:Parakoopa/castv2-device-monitor",
+    "castv2-device-monitor": "^1.3.0",
     "mpris-service": "^1.1.3"
   }
 }
