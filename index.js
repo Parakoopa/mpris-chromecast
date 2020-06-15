@@ -1,13 +1,25 @@
+#!/usr/bin/env nodejs
 const DeviceMonitor = require('castv2-device-monitor').DeviceMonitor;
 const Player = require('mpris-service');
+const ChromecastAPI = require('chromecast-api')
 
-const chromecastName = "Skycast";
+let chromecastName = "Skycast";
+
+if (process.argv[2])
+    chromecastName = process.argv[2]
+
+const client = new ChromecastAPI()
+client.update()
+
+const device = client.devices.filter(device => device.friendlyName === chromecastName)
+console.log(`Device: ${device.friendlyName}`)
+
 
 const player = Player({
     name: chromecastName,
     identity: chromecastName,
     supportedUriSchemes: ['file'],
-    supportedMimeTypes: ['audio/mpeg', 'application/ogg'],
+    supportedMimeTypes: ['audio/mpeg', 'application/ogg','video/mpeg'],
     supportedInterfaces: ['player'],
     rate: 1.0,
     volume: 1.0,
@@ -18,7 +30,7 @@ const player = Player({
     canGoPrevious: false,
     canPlay: true,
     canPause: true,
-    canSeek: false,
+    canSeek: true,
     canControl: true
 });
 
@@ -50,7 +62,16 @@ player.on('volume', volume => {
     dm.setVolume(volume);
 });
 
+player.on('seek', seek => {
+    console.log(seek)
+    device.seekTo(seek)
+})
+
 const dm = new DeviceMonitor(chromecastName);
+dm.on('playState', playState => {
+    player.playbackStatus = playState === 'play' ? 'Playing' : 'Paused'
+
+})
 dm.on('powerState', powerState => {
     if (powerState !== 'on') {
         player.playbackStatus = 'Stopped';
@@ -73,7 +94,6 @@ dm.on('application', application => {
         'xesam:artist': [artist]
     };
 
-    player.playbackStatus = 'Playing';
     console.log("application");
     console.log(application);
 });
@@ -94,10 +114,10 @@ dm.on('media', media => {
         'xesam:artist': artist,
     };
 
-    player.playbackStatus = 'Playing';
     console.log("media");
     console.log(media);
 });
 dm.on('volume', volume => {
     player.volume = volume;
 });
+
